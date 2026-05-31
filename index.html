@@ -10,351 +10,133 @@
 <link rel="manifest" href="manifest.json"/>
 <title>OptionSizer</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@500;700&display=swap');
+:root {
+  --bg: #0a0f1e; --surface: #111827; --surface2: #1a2235;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.14);
+  --green: #00e5a0; --green-dim: rgba(0,229,160,0.12); --green-mid: rgba(0,229,160,0.25);
+  --red: #ff5f6d; --red-dim: rgba(255,95,109,0.12);
+  --amber: #f5a623; --amber-dim: rgba(245,166,35,0.12);
+  --text: #f0f4ff; --text2: #7a8ba8; --text3: #3d4f6a;
+  --radius: 16px; --radius-sm: 10px;
+  --mono: 'DM Mono', monospace; --display: 'Syne', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--mono); overscroll-behavior: none; }
+body { min-height: 100vh; min-height: -webkit-fill-available; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+.app { max-width: 430px; margin: 0 auto; padding: 16px 16px 40px; min-height: 100dvh; display: flex; flex-direction: column; gap: 12px; }
 
-  :root {
-    --bg: #0a0f1e;
-    --surface: #111827;
-    --surface2: #1a2235;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.14);
-    --green: #00e5a0;
-    --green-dim: rgba(0,229,160,0.12);
-    --green-mid: rgba(0,229,160,0.25);
-    --red: #ff5f6d;
-    --red-dim: rgba(255,95,109,0.12);
-    --amber: #f5a623;
-    --amber-dim: rgba(245,166,35,0.12);
-    --text: #f0f4ff;
-    --text2: #7a8ba8;
-    --text3: #3d4f6a;
-    --radius: 16px;
-    --radius-sm: 10px;
-    --mono: 'DM Mono', monospace;
-    --display: 'Syne', sans-serif;
-  }
+/* Header */
+.header { display: flex; align-items: center; justify-content: space-between; padding: 8px 0 4px; }
+.header-title { font-family: var(--display); font-size: 22px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); }
+.header-title span { color: var(--green); }
+.header-right { display: flex; align-items: center; gap: 8px; }
+.offline-badge { font-size: 10px; padding: 3px 8px; border-radius: 20px; background: var(--green-dim); color: var(--green); border: 0.5px solid var(--green); letter-spacing: 0.05em; }
+.version-badge { font-size: 10px; padding: 3px 8px; border-radius: 20px; background: var(--surface2); color: var(--text3); border: 0.5px solid var(--border2); letter-spacing: 0.05em; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+/* iOS install hint */
+.ios-hint { display: none; align-items: center; gap: 10px; background: var(--surface2); border: 0.5px solid rgba(0,229,160,0.25); border-radius: var(--radius); padding: 12px 14px; }
+.ios-hint .ih-icon { font-size: 22px; flex-shrink: 0; }
+.ios-hint .ih-text { font-size: 11px; color: var(--text2); line-height: 1.6; }
+.ios-hint .ih-text b { color: var(--text); font-size: 12px; display: block; margin-bottom: 2px; }
+.ios-hint .ih-text span { color: var(--green); }
+.ios-hint .ih-close { margin-left: auto; font-size: 18px; color: var(--text3); cursor: pointer; padding: 4px; flex-shrink: 0; }
 
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--mono);
-    overscroll-behavior: none;
-  }
+/* Cards */
+.card { background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px; }
+.card-label { font-size: 10px; letter-spacing: 0.1em; color: var(--text2); text-transform: uppercase; margin-bottom: 10px; }
 
-  body {
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  }
+/* Instrument */
+.inst-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.inst-btn { padding: 12px 8px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); background: var(--surface2); color: var(--text2); font-family: var(--display); font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; transition: all 0.15s; -webkit-user-select: none; }
+.inst-btn .lot { display: block; font-family: var(--mono); font-size: 10px; color: var(--text3); margin-top: 2px; font-weight: 400; }
+.inst-btn.active { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+.inst-btn.active .lot { color: rgba(0,229,160,0.6); }
+.inst-btn:active { transform: scale(0.97); }
+.custom-lot-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.custom-lot-row label { font-size: 12px; color: var(--text2); white-space: nowrap; }
+.custom-lot-row input { flex: 1; background: var(--surface2); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-family: var(--mono); font-size: 15px; padding: 10px 12px; outline: none; }
 
-  .app {
-    max-width: 430px;
-    margin: 0 auto;
-    padding: 16px 16px 32px;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+/* Inputs */
+.big-input-wrap { display: flex; align-items: center; background: var(--surface2); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); overflow: hidden; }
+.big-input-wrap .prefix { padding: 0 10px 0 14px; font-size: 16px; color: var(--text2); }
+.big-input-wrap input { flex: 1; background: none; border: none; outline: none; color: var(--text); font-family: var(--mono); font-size: 20px; font-weight: 500; padding: 14px 0; min-width: 0; }
+.big-input-wrap .unit { padding: 0 14px; font-size: 11px; color: var(--text3); letter-spacing: 0.05em; }
 
-  /* Header */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 0 4px;
-  }
-  .header-title {
-    font-family: var(--display);
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    color: var(--text);
-  }
-  .header-title span { color: var(--green); }
-  .offline-badge {
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background: var(--green-dim);
-    color: var(--green);
-    border: 0.5px solid var(--green);
-    letter-spacing: 0.05em;
-  }
+/* Quick buttons */
+.quick-row { display: flex; gap: 6px; margin-top: 8px; }
+.q-btn { flex: 1; padding: 9px 4px; border-radius: var(--radius-sm); font-family: var(--mono); font-size: 12px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--border2); background: var(--surface2); color: var(--text2); transition: all 0.12s; -webkit-user-select: none; }
+.q-btn.pos { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+.q-btn.neg { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+.q-btn:active { transform: scale(0.95); opacity: 0.8; }
 
-  /* Cards */
-  .card {
-    background: var(--surface);
-    border: 0.5px solid var(--border2);
-    border-radius: var(--radius);
-    padding: 16px;
-  }
+/* SL */
+.sl-btn { flex: 1; padding: 9px 4px; border-radius: var(--radius-sm); font-family: var(--mono); font-size: 12px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--border2); background: var(--surface2); color: var(--text2); text-align: center; transition: all 0.12s; -webkit-user-select: none; }
+.sl-btn.active { background: var(--amber-dim); border-color: var(--amber); color: var(--amber); }
+.sl-btn:active { transform: scale(0.95); opacity: 0.8; }
 
-  .card-label {
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: var(--text2);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
+/* Save defaults button */
+.save-defaults-btn { width: 100%; padding: 14px; border-radius: var(--radius); border: 0.5px solid rgba(0,229,160,0.4); background: var(--green-dim); color: var(--green); font-family: var(--mono); font-size: 13px; font-weight: 500; cursor: pointer; letter-spacing: 0.04em; transition: all 0.15s; -webkit-user-select: none; text-align: center; }
+.save-defaults-btn:active { transform: scale(0.98); opacity: 0.8; }
+.save-defaults-btn.saved { border-color: rgba(0,229,160,0.8); background: var(--green-mid); }
 
-  /* Instrument selector */
-  .inst-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-  .inst-btn {
-    padding: 12px 8px;
-    border-radius: var(--radius-sm);
-    border: 0.5px solid var(--border2);
-    background: var(--surface2);
-    color: var(--text2);
-    font-family: var(--display);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-    -webkit-user-select: none;
-  }
-  .inst-btn .lot {
-    display: block;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text3);
-    margin-top: 2px;
-    font-weight: 400;
-  }
-  .inst-btn.active {
-    background: var(--green-dim);
-    border-color: var(--green);
-    color: var(--green);
-  }
-  .inst-btn.active .lot { color: rgba(0,229,160,0.6); }
-  .inst-btn:active { transform: scale(0.97); }
+/* Results */
+.results-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.result-card { border-radius: var(--radius-sm); padding: 14px 10px; text-align: center; border: 0.5px solid var(--border); background: var(--surface2); }
+.result-card .r-label { font-size: 9px; letter-spacing: 0.1em; color: var(--text2); text-transform: uppercase; margin-bottom: 8px; }
+.result-card .r-val { font-family: var(--display); font-size: 26px; font-weight: 700; line-height: 1; color: var(--text); }
+.result-card .r-sub { font-size: 10px; color: var(--text3); margin-top: 5px; line-height: 1.4; }
+.result-card.green { background: var(--green-dim); border-color: rgba(0,229,160,0.3); }
+.result-card.green .r-val { color: var(--green); }
+.result-card.red { background: var(--red-dim); border-color: rgba(255,95,109,0.3); }
+.result-card.red .r-val { color: var(--red); }
+.breakdown { font-size: 12px; color: var(--text2); line-height: 1.9; border-top: 0.5px solid var(--border); margin-top: 14px; padding-top: 14px; }
+.breakdown b { color: var(--text); font-weight: 500; }
 
-  .custom-lot-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .custom-lot-row label { font-size: 12px; color: var(--text2); white-space: nowrap; }
-  .custom-lot-row input {
-    flex: 1;
-    background: var(--surface2);
-    border: 0.5px solid var(--border2);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 15px;
-    padding: 10px 12px;
-    outline: none;
-  }
+/* Two-col layout */
+.two-col { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; width: 100%; overflow: hidden; }
+.two-col .card { min-width: 0; overflow: hidden; }
+.two-col .big-input-wrap { min-width: 0; }
+.two-col .big-input-wrap input { min-width: 0; width: 100%; }
+.two-col .quick-row { min-width: 0; }
+.two-col .q-btn, .two-col .sl-btn { min-width: 0; overflow: hidden; }
 
-  /* Input row */
-  .input-block { margin-bottom: 0; }
-  .big-input-wrap {
-    display: flex;
-    align-items: center;
-    background: var(--surface2);
-    border: 0.5px solid var(--border2);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-  }
-  .big-input-wrap .prefix {
-    padding: 0 10px 0 14px;
-    font-size: 16px;
-    color: var(--text2);
-  }
-  .big-input-wrap input {
-    flex: 1;
-    background: none;
-    border: none;
-    outline: none;
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 20px;
-    font-weight: 500;
-    padding: 14px 0;
-    min-width: 0;
-  }
-  .big-input-wrap .unit {
-    padding: 0 14px;
-    font-size: 11px;
-    color: var(--text3);
-    letter-spacing: 0.05em;
-  }
+/* Profit estimator */
+.profit-card { background: var(--surface); border: 0.5px solid rgba(0,229,160,0.2); border-radius: var(--radius); padding: 16px; }
+.profit-card .card-label { margin-bottom: 12px; }
+.profit-results { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.profit-metric { background: var(--surface2); border-radius: var(--radius-sm); padding: 12px 10px; text-align: center; border: 0.5px solid var(--border); }
+.profit-metric .p-label { font-size: 9px; letter-spacing: 0.1em; color: var(--text2); text-transform: uppercase; margin-bottom: 6px; }
+.profit-metric .p-val { font-family: var(--display); font-size: 22px; font-weight: 700; color: var(--green); line-height: 1; }
+.profit-metric .p-sub { font-size: 10px; color: var(--text3); margin-top: 4px; }
+.profit-metric.full { grid-column: span 2; }
+.rr-badge { display: inline-block; font-size: 11px; padding: 4px 12px; border-radius: 20px; background: var(--green-dim); color: var(--green); border: 0.5px solid rgba(0,229,160,0.3); margin-top: 10px; }
 
-  /* Quick adjust buttons */
-  .quick-row {
-    display: flex;
-    gap: 6px;
-    margin-top: 8px;
-  }
-  .q-btn {
-    flex: 1;
-    padding: 9px 4px;
-    border-radius: var(--radius-sm);
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    border: 0.5px solid var(--border2);
-    background: var(--surface2);
-    color: var(--text2);
-    transition: all 0.12s;
-    -webkit-user-select: none;
-  }
-  .q-btn.pos { background: var(--green-dim); border-color: var(--green); color: var(--green); }
-  .q-btn.neg { background: var(--red-dim); border-color: var(--red); color: var(--red); }
-  .q-btn:active { transform: scale(0.95); opacity: 0.8; }
-
-  /* SL presets — same size as q-btn */
-  .sl-btn {
-    flex: 1;
-    padding: 9px 4px;
-    border-radius: var(--radius-sm);
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    border: 0.5px solid var(--border2);
-    background: var(--surface2);
-    color: var(--text2);
-    text-align: center;
-    transition: all 0.12s;
-    -webkit-user-select: none;
-  }
-  .sl-btn.active { background: var(--amber-dim); border-color: var(--amber); color: var(--amber); }
-  .sl-btn:active { transform: scale(0.95); opacity: 0.8; }
-
-  /* Profit estimator */
-  .profit-card {
-    background: var(--surface);
-    border: 0.5px solid rgba(0,229,160,0.2);
-    border-radius: var(--radius);
-    padding: 16px;
-  }
-  .profit-card .card-label { margin-bottom: 12px; }
-  .profit-results {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 12px;
-  }
-  .profit-metric {
-    background: var(--surface2);
-    border-radius: var(--radius-sm);
-    padding: 12px 10px;
-    text-align: center;
-    border: 0.5px solid var(--border);
-  }
-  .profit-metric .p-label {
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    color: var(--text2);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .profit-metric .p-val {
-    font-family: var(--display);
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--green);
-    line-height: 1;
-  }
-  .profit-metric .p-sub {
-    font-size: 10px;
-    color: var(--text3);
-    margin-top: 4px;
-  }
-  .profit-metric.full { grid-column: span 2; }
-  .rr-badge {
-    display: inline-block;
-    font-size: 11px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    background: var(--green-dim);
-    color: var(--green);
-    border: 0.5px solid rgba(0,229,160,0.3);
-    margin-top: 10px;
-  }
-
-  /* Results */
-  .results-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-  .result-card {
-    border-radius: var(--radius-sm);
-    padding: 14px 10px;
-    text-align: center;
-    border: 0.5px solid var(--border);
-    background: var(--surface2);
-  }
-  .result-card .r-label {
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    color: var(--text2);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-  .result-card .r-val {
-    font-family: var(--display);
-    font-size: 26px;
-    font-weight: 700;
-    line-height: 1;
-    color: var(--text);
-  }
-  .result-card .r-sub {
-    font-size: 10px;
-    color: var(--text3);
-    margin-top: 5px;
-    line-height: 1.4;
-  }
-  .result-card.green { background: var(--green-dim); border-color: rgba(0,229,160,0.3); }
-  .result-card.green .r-val { color: var(--green); }
-  .result-card.red { background: var(--red-dim); border-color: rgba(255,95,109,0.3); }
-  .result-card.red .r-val { color: var(--red); }
-
-  /* Breakdown */
-  .breakdown {
-    font-size: 12px;
-    color: var(--text2);
-    line-height: 1.9;
-    border-top: 0.5px solid var(--border);
-    margin-top: 14px;
-    padding-top: 14px;
-  }
-  .breakdown b { color: var(--text); font-weight: 500; }
-
-  /* Two-col layout for inputs */
-  .two-col { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; width: 100%; overflow: hidden; }
-  .two-col .card { min-width: 0; overflow: hidden; }
-  .two-col .big-input-wrap { min-width: 0; }
-  .two-col .big-input-wrap input { min-width: 0; width: 100%; }
-  .two-col .quick-row { min-width: 0; }
-  .two-col .q-btn, .two-col .sl-btn { min-width: 0; overflow: hidden; }
-
-  /* Focus */
-  input:focus { border-color: rgba(0,229,160,0.5) !important; }
-
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+input:focus { border-color: rgba(0,229,160,0.5) !important; }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 </style>
 </head>
 <body>
 <div class="app">
 
+  <!-- Header -->
   <div class="header">
     <div class="header-title">Option<span>Sizer</span></div>
-    <div class="offline-badge">WORKS OFFLINE</div>
+    <div class="header-right">
+      <div class="version-badge">v1.1.0</div>
+      <div class="offline-badge">WORKS OFFLINE</div>
+    </div>
+  </div>
+
+  <!-- iOS Add to Home Screen hint -->
+  <div class="ios-hint" id="iosHint">
+    <div class="ih-icon">📲</div>
+    <div class="ih-text">
+      <b>Install as iPhone App</b>
+      Tap <span>Share ↑</span> → <span>Add to Home Screen</span> → <span>Add</span>
+    </div>
+    <div class="ih-close" onclick="dismissIOSHint()">✕</div>
   </div>
 
   <!-- Instrument -->
@@ -415,7 +197,6 @@
         <button class="q-btn" onclick="adj('premium',-5)">−5</button>
       </div>
     </div>
-
     <div class="card">
       <div class="card-label">Stop loss</div>
       <div class="big-input-wrap">
@@ -432,6 +213,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Save defaults -->
+  <button class="save-defaults-btn" id="saveBtn" onclick="saveDefaults()">⬇ Save current values as default</button>
 
   <!-- Results -->
   <div class="card">
@@ -490,128 +274,147 @@
   </div>
 
 </div>
-
 <script>
-  const LOT = { NIFTY:65, BANKNIFTY:30, FINNIFTY:40, SENSEX:20 };
-  let currentInst = 'NIFTY';
-  let deployedCapital = 0;
-  let maxRiskAmt = 0;
+const LOT = { NIFTY:65, BANKNIFTY:30, FINNIFTY:40, SENSEX:20 };
+const STORAGE_KEY = 'optionSizer_defaults';
+let currentInst = 'NIFTY';
+let deployedCapital = 0;
+let maxRiskAmt = 0;
 
-  function selectInst(btn) {
-    document.querySelectorAll('.inst-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentInst = btn.dataset.inst;
-    document.getElementById('customWrap').style.display = currentInst === 'CUSTOM' ? 'flex' : 'none';
-    compute();
-  }
+// iOS hint
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.navigator.standalone === true;
+if (isIOS && !isStandalone && !localStorage.getItem('iosHintDismissed')) {
+  document.getElementById('iosHint').style.display = 'flex';
+}
+function dismissIOSHint() {
+  document.getElementById('iosHint').style.display = 'none';
+  localStorage.setItem('iosHintDismissed', '1');
+}
 
-  function getLot() {
-    return currentInst === 'CUSTOM'
-      ? (parseInt(document.getElementById('customLot').value) || 1)
-      : LOT[currentInst];
-  }
-
-  function num(id) { return parseFloat(document.getElementById(id).value) || 0; }
-
-  function adj(id, delta) {
-    const el = document.getElementById(id);
-    const min = parseFloat(el.min) || 0;
-    el.value = Math.max(min, (parseFloat(el.value) || 0) + delta);
-    compute();
-  }
-
-  function adjProfit(delta) {
-    const el = document.getElementById('profitPct');
-    el.value = Math.max(1, (parseFloat(el.value) || 0) + delta);
-    computeProfit();
-  }
-
-  function setSL(v) {
-    document.getElementById('slPct').value = v;
-    setSLActive();
-    compute();
-  }
-
-  function setSLActive() {
-    const v = num('slPct');
-    ['sl50','sl30','sl20','sl10'].forEach(id => document.getElementById(id).classList.remove('active'));
-    if (v === 50) document.getElementById('sl50').classList.add('active');
-    else if (v === 30) document.getElementById('sl30').classList.add('active');
-    else if (v === 20) document.getElementById('sl20').classList.add('active');
-    else if (v === 10) document.getElementById('sl10').classList.add('active');
-  }
-
-  function fmt(n) {
-    if (n >= 100000) return '₹' + (n/100000).toFixed(1) + 'L';
-    if (n >= 1000) return '₹' + (n/1000).toFixed(1) + 'k';
-    return '₹' + Math.round(n);
-  }
-  function fmtFull(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
-
-  function compute() {
-    const riskAmt = num('riskAmt');
-    const premium = num('premium');
-    const slPct = num('slPct');
-    const lotSize = getLot();
-    const instLabel = currentInst === 'CUSTOM' ? 'Custom' : currentInst;
-
-    const slPerShare = premium * slPct / 100;
-    const riskPerLot = slPerShare * lotSize;
-    let lots = riskPerLot > 0 ? Math.floor(riskAmt / riskPerLot) : 0;
-    if (lots < 1 && riskPerLot > 0) lots = 1;
-
-    const premPerLot = premium * lotSize;
-    const totalCapital = lots * premPerLot;
-    const totalRisk = lots * riskPerLot;
-
-    deployedCapital = totalCapital;
-    maxRiskAmt = totalRisk;
-
-    document.getElementById('res-lots').textContent = lots || '—';
-    document.getElementById('res-lots-sub').textContent = lots ? lotSize + ' × ' + lots : '';
-    document.getElementById('res-capital').textContent = lots ? fmt(totalCapital) : '—';
-    document.getElementById('res-cap-sub').textContent = lots ? fmtFull(premPerLot) + '/lot' : '';
-    document.getElementById('res-risk').textContent = lots ? fmt(totalRisk) : '—';
-    document.getElementById('res-risk-sub').textContent = lots ? fmtFull(riskPerLot) + '/lot' : '';
-
-    document.getElementById('breakdown').innerHTML = lots
-      ? `<b>${instLabel}</b> &nbsp;·&nbsp; Lot: <b>${lotSize} shares</b> &nbsp;·&nbsp; Budget: <b>${fmtFull(riskAmt)}</b><br>` +
-        `Premium: <b>₹${premium}</b> &nbsp;·&nbsp; SL: <b>${slPct}%</b> = ₹${slPerShare.toFixed(1)}/sh &nbsp;·&nbsp; Risk/lot: <b>${fmtFull(riskPerLot)}</b>`
-      : '<b>Enter values above to see position size</b>';
-
-    computeProfit();
-  }
-
-  function computeProfit() {
-    const pct = num('profitPct');
-    if (!deployedCapital || !pct) {
-      document.getElementById('p-profit').textContent = '—';
-      document.getElementById('p-exit').textContent = '—';
-      document.getElementById('rr-text').textContent = 'Enter position details above first';
-      document.getElementById('rr-badge').style.display = 'none';
-      return;
+// Load saved defaults
+function loadDefaults() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!saved) return;
+    if (saved.inst) {
+      const btn = document.querySelector(`.inst-btn[data-inst="${saved.inst}"]`);
+      if (btn) {
+        document.querySelectorAll('.inst-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentInst = saved.inst;
+      }
     }
-    const profit = deployedCapital * pct / 100;
-    const exitVal = deployedCapital + profit;
-    const rr = maxRiskAmt > 0 ? (profit / maxRiskAmt).toFixed(2) : '—';
+    if (saved.customLot) document.getElementById('customLot').value = saved.customLot;
+    document.getElementById('customWrap').style.display = currentInst === 'CUSTOM' ? 'flex' : 'none';
+    if (saved.riskAmt) document.getElementById('riskAmt').value = saved.riskAmt;
+    if (saved.premium) document.getElementById('premium').value = saved.premium;
+    if (saved.slPct) { document.getElementById('slPct').value = saved.slPct; setSLActive(); }
+    if (saved.profitPct) document.getElementById('profitPct').value = saved.profitPct;
+  } catch(e) {}
+}
 
-    document.getElementById('p-profit').textContent = fmt(profit);
-    document.getElementById('p-profit-sub').textContent = fmtFull(profit) + ' gain';
-    document.getElementById('p-exit').textContent = fmt(exitVal);
-    document.getElementById('p-exit-sub').textContent = fmtFull(exitVal) + ' total';
+function saveDefaults() {
+  const data = {
+    inst: currentInst,
+    customLot: document.getElementById('customLot').value,
+    riskAmt: document.getElementById('riskAmt').value,
+    premium: document.getElementById('premium').value,
+    slPct: document.getElementById('slPct').value,
+    profitPct: document.getElementById('profitPct').value,
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = '✓ Saved as default';
+  btn.classList.add('saved');
+  setTimeout(() => { btn.textContent = '⬇ Save current values as default'; btn.classList.remove('saved'); }, 2000);
+}
 
-    document.getElementById('rr-text').textContent =
-      `Risk ${fmtFull(maxRiskAmt)}  →  Reward ${fmtFull(profit)}`;
-    const badge = document.getElementById('rr-badge');
-    badge.style.display = 'inline-block';
-    badge.textContent = `R:R  1 : ${rr}`;
-  }
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js');
-  }
-
+function selectInst(btn) {
+  document.querySelectorAll('.inst-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentInst = btn.dataset.inst;
+  document.getElementById('customWrap').style.display = currentInst === 'CUSTOM' ? 'flex' : 'none';
   compute();
+}
+function getLot() {
+  return currentInst === 'CUSTOM' ? (parseInt(document.getElementById('customLot').value) || 1) : LOT[currentInst];
+}
+function num(id) { return parseFloat(document.getElementById(id).value) || 0; }
+function adj(id, delta) {
+  const el = document.getElementById(id);
+  el.value = Math.max(parseFloat(el.min) || 0, (parseFloat(el.value) || 0) + delta);
+  compute();
+}
+function adjProfit(delta) {
+  const el = document.getElementById('profitPct');
+  el.value = Math.max(1, (parseFloat(el.value) || 0) + delta);
+  computeProfit();
+}
+function setSL(v) { document.getElementById('slPct').value = v; setSLActive(); compute(); }
+function setSLActive() {
+  const v = num('slPct');
+  ['sl50','sl30','sl20','sl10'].forEach(id => document.getElementById(id).classList.remove('active'));
+  if (v===50) document.getElementById('sl50').classList.add('active');
+  else if (v===30) document.getElementById('sl30').classList.add('active');
+  else if (v===20) document.getElementById('sl20').classList.add('active');
+  else if (v===10) document.getElementById('sl10').classList.add('active');
+}
+function fmt(n) {
+  if (n >= 100000) return '₹' + (n/100000).toFixed(1) + 'L';
+  if (n >= 1000) return '₹' + (n/1000).toFixed(1) + 'k';
+  return '₹' + Math.round(n);
+}
+function fmtFull(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
+function compute() {
+  const riskAmt = num('riskAmt'), premium = num('premium'), slPct = num('slPct'), lotSize = getLot();
+  const instLabel = currentInst === 'CUSTOM' ? 'Custom' : currentInst;
+  const slPerShare = premium * slPct / 100;
+  const riskPerLot = slPerShare * lotSize;
+  let lots = riskPerLot > 0 ? Math.floor(riskAmt / riskPerLot) : 0;
+  if (lots < 1 && riskPerLot > 0) lots = 1;
+  const premPerLot = premium * lotSize;
+  const totalCapital = lots * premPerLot;
+  const totalRisk = lots * riskPerLot;
+  deployedCapital = totalCapital;
+  maxRiskAmt = totalRisk;
+  document.getElementById('res-lots').textContent = lots || '—';
+  document.getElementById('res-lots-sub').textContent = lots ? lotSize + ' × ' + lots : '';
+  document.getElementById('res-capital').textContent = lots ? fmt(totalCapital) : '—';
+  document.getElementById('res-cap-sub').textContent = lots ? fmtFull(premPerLot) + '/lot' : '';
+  document.getElementById('res-risk').textContent = lots ? fmt(totalRisk) : '—';
+  document.getElementById('res-risk-sub').textContent = lots ? fmtFull(riskPerLot) + '/lot' : '';
+  document.getElementById('breakdown').innerHTML = lots
+    ? `<b>${instLabel}</b> &nbsp;·&nbsp; Lot: <b>${lotSize} shares</b> &nbsp;·&nbsp; Budget: <b>${fmtFull(riskAmt)}</b><br>Premium: <b>₹${premium}</b> &nbsp;·&nbsp; SL: <b>${slPct}%</b> = ₹${slPerShare.toFixed(1)}/sh &nbsp;·&nbsp; Risk/lot: <b>${fmtFull(riskPerLot)}</b>`
+    : '<b>Enter values above to see position size</b>';
+  computeProfit();
+}
+function computeProfit() {
+  const pct = num('profitPct');
+  if (!deployedCapital || !pct) {
+    document.getElementById('p-profit').textContent = '—';
+    document.getElementById('p-exit').textContent = '—';
+    document.getElementById('rr-text').textContent = 'Enter position details above first';
+    document.getElementById('rr-badge').style.display = 'none';
+    return;
+  }
+  const profit = deployedCapital * pct / 100;
+  const exitVal = deployedCapital + profit;
+  const rr = maxRiskAmt > 0 ? (profit / maxRiskAmt).toFixed(2) : '—';
+  document.getElementById('p-profit').textContent = fmt(profit);
+  document.getElementById('p-profit-sub').textContent = fmtFull(profit) + ' gain';
+  document.getElementById('p-exit').textContent = fmt(exitVal);
+  document.getElementById('p-exit-sub').textContent = fmtFull(exitVal) + ' total';
+  document.getElementById('rr-text').textContent = `Risk ${fmtFull(maxRiskAmt)} → Reward ${fmtFull(profit)}`;
+  const badge = document.getElementById('rr-badge');
+  badge.style.display = 'inline-block';
+  badge.textContent = `R:R 1 : ${rr}`;
+}
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
+loadDefaults();
+compute();
 </script>
 </body>
 </html>
