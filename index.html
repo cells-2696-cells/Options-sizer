@@ -115,20 +115,64 @@ body { min-height: 100vh; min-height: -webkit-fill-available; padding: env(safe-
 input:focus { border-color: rgba(0,229,160,0.5) !important; }
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+/* ---------- v2.0 additions ---------- */
+.ver-toggle { display:flex; background: var(--surface2); border: 0.5px solid var(--border2); border-radius: 20px; padding: 2px; }
+.ver-toggle button { border:none; background:none; color: var(--text3); font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: 18px; cursor:pointer; }
+.ver-toggle button.active { background: var(--green-dim); color: var(--green); }
+.seg { display:flex; gap:6px; }
+.seg button { flex:1; padding: 10px 4px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); background: var(--surface2); color: var(--text2); font-family: var(--mono); font-size: 12px; font-weight:500; cursor:pointer; -webkit-user-select:none; }
+.seg button.active { background: var(--amber-dim); border-color: var(--amber); color: var(--amber); }
+.seg.green button.active { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+.seg button:active { transform: scale(0.96); }
+.sod-row { display:flex; gap:8px; margin-top:10px; }
+.expiry-chip { margin-top:10px; display:flex; align-items:center; justify-content:space-between; gap:8px; background: var(--surface2); border: 0.5px dashed var(--border2); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 12px; color: var(--text2); cursor:pointer; -webkit-user-select:none; }
+.expiry-chip b { color: var(--text); font-weight:500; }
+.expiry-chip .ov { font-size:10px; color: var(--amber); }
+.field-label { font-size: 11px; color: var(--text2); margin: 12px 0 6px; }
+.field-label:first-child { margin-top: 0; }
+.sl-hero { background: var(--amber-dim); border: 0.5px solid rgba(245,166,35,0.35); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 12px; }
+.sl-hero .h-top { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+.sl-hero .h-lab { font-size: 11px; color: var(--amber); }
+.sl-hero .h-val { font-family: var(--display); font-size: 30px; font-weight:700; color: var(--amber); line-height:1; }
+.sl-hero .h-sub { font-size: 11px; color: var(--text2); margin-top: 8px; line-height:1.6; }
+.warn { font-size: 12px; line-height:1.5; color: var(--amber); background: var(--amber-dim); border-left: 2px solid var(--amber); border-radius: 6px; padding: 8px 10px; margin-top: 10px; }
+.warn.err { color: var(--red); background: var(--red-dim); border-left-color: var(--red); }
+.rr-compare { display:flex; gap:8px; margin-top:8px; }
+.rr-compare > div { flex:1; background: var(--surface2); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px; text-align:center; }
+.rr-compare .p-label { font-size: 9px; letter-spacing:0.1em; color: var(--text2); text-transform: uppercase; margin-bottom:6px; }
+.rr-compare .v { font-family: var(--display); font-size: 20px; font-weight:700; }
+.rr-compare .planned .v { color: var(--text); }
+.rr-compare .real .v { color: var(--green); }
+.rr-compare .real.low .v { color: var(--amber); }
+.hidden { display:none !important; }
+.levels { display:grid; grid-template-columns: 1fr 1fr; gap:8px; }
+.lvl { border-radius: var(--radius-sm); padding: 12px 12px 11px; border: 1.5px solid; position:relative; }
+.lvl .l-tab { display:inline-block; font-size:10px; font-weight:500; padding:2px 8px; border-radius:20px; margin-bottom:8px; color: var(--bg); }
+.lvl .l-val { font-family: var(--display); font-size: 30px; font-weight:700; line-height:1; }
+.lvl .l-sub { font-size: 10.5px; color: var(--text2); margin-top:6px; line-height:1.5; }
+.lvl.sl { background: linear-gradient(160deg, rgba(255,95,109,0.24), rgba(255,95,109,0.08)); border-color: var(--red); }
+.lvl.sl .l-tab { background: var(--red); }
+.lvl.sl .l-val { color: #ff8a94; }
+.lvl.tg { background: linear-gradient(160deg, rgba(0,229,160,0.24), rgba(0,229,160,0.08)); border-color: var(--green); }
+.lvl.tg .l-tab { background: var(--green); }
+.lvl.tg .l-val { color: #5dfbc4; }
+.lvl-note { font-size: 11px; color: var(--text2); line-height:1.6; margin: 10px 2px 12px; }
+.lvl-note b { color: var(--text); font-weight:500; }
 </style>
 </head>
 <body>
-<div class="app">
-
-  <!-- Header -->
+<div class="app" style="padding-bottom:0;min-height:0;">
   <div class="header">
     <div class="header-title">Option<span>Sizer</span></div>
     <div class="header-right">
-      <div class="version-badge">v1.1.0</div>
-      <div class="offline-badge">WORKS OFFLINE</div>
+      <div class="ver-toggle">
+        <button data-v="1" onclick="setVersion('1')">v1.1</button>
+        <button data-v="2" class="active" onclick="setVersion('2')">v2.0</button>
+      </div>
+      <div class="offline-badge">OFFLINE</div>
     </div>
   </div>
-
   <!-- iOS Add to Home Screen hint -->
   <div class="ios-hint" id="iosHint">
     <div class="ih-icon">📲</div>
@@ -138,6 +182,10 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     </div>
     <div class="ih-close" onclick="dismissIOSHint()">✕</div>
   </div>
+
+  
+</div>
+<div class="app" id="appV1">
 
   <!-- Instrument -->
   <div class="card">
@@ -274,6 +322,134 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   </div>
 
 </div>
+
+<div class="app hidden" id="appV2">
+
+  <!-- Start of day -->
+  <div class="card">
+    <div class="card-label">Start of day</div>
+    <div class="inst-grid">
+      <button class="inst-btn active" data-inst="NIFTY" onclick="v2.inst(this)">NIFTY <span class="lot">lot 65 · Tue expiry</span></button>
+      <button class="inst-btn" data-inst="SENSEX" onclick="v2.inst(this)">SENSEX <span class="lot">lot 20 · Thu expiry</span></button>
+    </div>
+    <div class="field-label" style="margin-top:14px;">Risk per trade</div>
+    <div class="big-input-wrap">
+      <span class="prefix">₹</span>
+      <input type="number" id="v2risk" value="5000" min="100" inputmode="numeric" oninput="v2.compute()"/>
+    </div>
+    <div class="quick-row">
+      <button class="q-btn pos" onclick="v2.adj('v2risk',1000)">+1000</button>
+      <button class="q-btn pos" onclick="v2.adj('v2risk',500)">+500</button>
+      <button class="q-btn neg" onclick="v2.adj('v2risk',-500)">−500</button>
+      <button class="q-btn neg" onclick="v2.adj('v2risk',-1000)">−1000</button>
+    </div>
+    <div class="expiry-chip" id="v2expiry" onclick="v2.cycleDTE()"></div>
+    <button class="save-defaults-btn" id="v2save" style="margin-top:12px;" onclick="v2.save()">⬇ Save as default</button>
+  </div>
+
+  <!-- Trade inputs -->
+  <div class="card">
+    <div class="card-label">Stop loss method</div>
+    <div class="seg" id="v2mode">
+      <button class="active" data-m="auto" onclick="v2.mode('auto')">Auto (ATR)</button>
+      <button data-m="manual" onclick="v2.mode('manual')">Manual (%)</button>
+    </div>
+
+    <div id="v2posWrap">
+      <div class="field-label" style="margin-top:14px;">Strike position</div>
+      <div class="seg" id="v2pos">
+        <button data-p="ITM+2" onclick="v2.pos('ITM+2')">ITM+2</button>
+        <button data-p="ITM+1" onclick="v2.pos('ITM+1')">ITM+1</button>
+        <button data-p="ATM" class="active" onclick="v2.pos('ATM')">ATM</button>
+        <button data-p="OTM+1" onclick="v2.pos('OTM+1')">OTM+1</button>
+        <button data-p="OTM+2" onclick="v2.pos('OTM+2')">OTM+2</button>
+      </div>
+    </div>
+
+    <div class="field-label" style="margin-top:14px;">Entry premium</div>
+    <div class="big-input-wrap">
+      <span class="prefix">₹</span>
+      <input type="number" id="v2prem" value="" placeholder="0.00" step="0.05" inputmode="decimal" oninput="v2.compute()"/>
+    </div>
+
+    <div id="v2autoWrap" class="two-col" style="margin-top:12px;">
+      <div>
+        <div class="field-label">Swing SL</div>
+        <div class="big-input-wrap"><input type="number" id="v2swing" placeholder="0.00" step="0.05" inputmode="decimal" oninput="v2.compute()" style="padding-left:14px;font-size:18px;"/></div>
+      </div>
+      <div>
+        <div class="field-label">ATR (14)</div>
+        <div class="big-input-wrap"><input type="number" id="v2atr" placeholder="0.00" step="0.01" inputmode="decimal" oninput="v2.compute()" style="padding-left:14px;font-size:18px;"/></div>
+      </div>
+    </div>
+
+    <div id="v2manWrap" class="hidden" style="margin-top:12px;">
+      <div class="field-label">Stop loss %</div>
+      <div class="big-input-wrap">
+        <input type="number" id="v2slpct" value="30" min="1" max="99" inputmode="numeric" oninput="v2.compute()" style="padding-left:14px;font-size:18px;"/>
+        <span class="unit">%</span>
+      </div>
+      <div class="quick-row">
+        <button class="sl-btn" data-s="50" onclick="v2.slpct(50)">50%</button>
+        <button class="sl-btn" data-s="30" onclick="v2.slpct(30)">30%</button>
+        <button class="sl-btn" data-s="20" onclick="v2.slpct(20)">20%</button>
+        <button class="sl-btn" data-s="10" onclick="v2.slpct(10)">10%</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="card">
+    <div class="levels">
+      <div class="lvl sl"><span class="l-tab" id="v2heroLab">Corrected SL</span><div class="l-val" id="v2slVal">—</div><div class="l-sub" id="v2slMini"></div></div>
+      <div class="lvl tg"><span class="l-tab" id="v2tgtLab">Target 1:2</span><div class="l-val" id="v2tgt">—</div><div class="l-sub" id="v2tgtSub"></div></div>
+    </div>
+    <div class="lvl-note" id="v2slSub">Enter entry premium, swing SL and ATR.</div>
+    <div class="results-grid">
+      <div class="result-card green"><div class="r-label">Lots</div><div class="r-val" id="v2lots">—</div><div class="r-sub" id="v2lotsSub"></div></div>
+      <div class="result-card"><div class="r-label">Deployed</div><div class="r-val" id="v2cap">—</div><div class="r-sub" id="v2capSub"></div></div>
+      <div class="result-card red"><div class="r-label">Max risk</div><div class="r-val" id="v2maxrisk">—</div><div class="r-sub" id="v2maxriskSub"></div></div>
+    </div>
+    <div id="v2warn"></div>
+  </div>
+
+  <!-- Profit estimator -->
+  <div class="profit-card">
+    <div class="card-label">📈 Profit Estimator</div>
+    <div class="seg green" id="v2pmode">
+      <button class="active" data-m="rr" onclick="v2.pmode('rr')">R:R</button>
+      <button data-m="pct" onclick="v2.pmode('pct')">% gain</button>
+    </div>
+    <div id="v2rrWrap" class="seg green" style="margin-top:8px;">
+      <button data-r="2" class="active" onclick="v2.rr(2)">1:2</button>
+      <button data-r="3" onclick="v2.rr(3)">1:3</button>
+      <button data-r="4" onclick="v2.rr(4)">1:4</button>
+      <button data-r="5" onclick="v2.rr(5)">1:5</button>
+    </div>
+    <div id="v2pctWrap" class="hidden" style="margin-top:8px;">
+      <div class="big-input-wrap">
+        <input type="number" id="v2ppct" value="20" min="1" max="500" inputmode="numeric" oninput="v2.compute()" style="padding-left:14px;"/>
+        <span class="unit">% gain</span>
+      </div>
+      <div class="quick-row">
+        <button class="q-btn pos" onclick="v2.adj('v2ppct',10)">+10%</button>
+        <button class="q-btn pos" onclick="v2.adj('v2ppct',5)">+5%</button>
+        <button class="q-btn neg" onclick="v2.adj('v2ppct',-5)">−5%</button>
+        <button class="q-btn neg" onclick="v2.adj('v2ppct',-10)">−10%</button>
+      </div>
+    </div>
+    <div class="profit-results">
+      <div class="profit-metric"><div class="p-label">Exit value</div><div class="p-val" id="v2exit">—</div><div class="p-sub" id="v2exitSub"></div></div>
+      <div class="profit-metric"><div class="p-label">Profit (₹)</div><div class="p-val" id="v2profit">—</div><div class="p-sub" id="v2profitSub"></div></div>
+    </div>
+    <div class="rr-compare">
+      <div class="planned"><div class="p-label" id="v2planLab">Planned</div><div class="v" id="v2planRR">—</div></div>
+      <div class="real" id="v2realBox"><div class="p-label">Realised</div><div class="v" id="v2realRR">—</div></div>
+    </div>
+    <div class="breakdown" id="v2break" style="margin-top:12px;"></div>
+  </div>
+</div>
+
 <script>
 const LOT = { NIFTY:65, BANKNIFTY:30, FINNIFTY:40, SENSEX:20 };
 const STORAGE_KEY = 'optionSizer_defaults';
@@ -410,11 +586,228 @@ function computeProfit() {
   badge.style.display = 'inline-block';
   badge.textContent = `R:R 1 : ${rr}`;
 }
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js');
-}
 loadDefaults();
 compute();
+
+/* ================= v2.0 ================= */
+const v2 = (() => {
+  const LOT2 = { NIFTY: 65, SENSEX: 20 };
+  const EXP_DOW = { NIFTY: 2, SENSEX: 4 };            // Tue, Thu
+  const K_POS = { 'ITM+2': 0.75, 'ITM+1': 0.85, 'ATM': 1.0, 'OTM+1': 1.15, 'OTM+2': 1.3 };
+  const KEY = 'optionSizer_v2_defaults';
+  const TICK = 0.05, MIN_ATR_DIST = 1.5;
+  const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const st = { inst: 'NIFTY', mode: 'auto', pos: 'ATM', pmode: 'rr', rr: 2, dteOverride: null };
+  const $ = id => document.getElementById(id);
+  const n = id => parseFloat($(id).value);
+  const inr = x => '₹' + Math.round(x).toLocaleString('en-IN');
+  const short = x => x >= 100000 ? '₹' + (x / 100000).toFixed(1) + 'L' : x >= 1000 ? '₹' + (x / 1000).toFixed(1) + 'k' : '₹' + Math.round(x);
+  const p2 = x => x.toFixed(2);
+
+  // ---- expiry / DTE (IST, weekdays only; exchange holidays not included -> tap to override)
+  function istNow() {
+    const d = new Date();
+    return new Date(d.getTime() + (d.getTimezoneOffset() + 330) * 60000);
+  }
+  function autoExpiry() {
+    const now = istNow(), dow = EXP_DOW[st.inst];
+    const mins = now.getHours() * 60 + now.getMinutes();
+    let d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    if (!(d.getDay() === dow && mins < 930)) {                 // past 15:30 on expiry -> next week
+      do { d.setDate(d.getDate() + 1); } while (d.getDay() !== dow);
+    }
+    let dte = 0, c = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    while (c < d) { c.setDate(c.getDate() + 1); if (c.getDay() % 6 !== 0) dte++; }
+    return { date: d, dte };
+  }
+  function dte() { return st.dteOverride !== null ? st.dteOverride : autoExpiry().dte; }
+  function dteFactor(x) { return x === 0 ? 1.3 : x <= 2 ? 1.15 : 1.0; }
+  function renderExpiry() {
+    const e = autoExpiry(), d = dte();
+    const lab = d === 0 ? 'Expiry day' : d >= 3 ? `DTE ${d}` : `DTE ${d}`;
+    $('v2expiry').innerHTML =
+      `<span>Expiry <b>${DAYS[e.date.getDay()]} ${e.date.getDate()} ${MON[e.date.getMonth()]}</b> · <b>${lab}</b> · k ×${dteFactor(d).toFixed(2)}</span>` +
+      `<span class="ov">${st.dteOverride !== null ? 'manual · tap to change' : 'auto · tap to override'}</span>`;
+  }
+  function cycleDTE() {
+    const seq = [null, 0, 1, 2, 3];
+    st.dteOverride = seq[(seq.indexOf(st.dteOverride) + 1) % seq.length];
+    compute();
+  }
+
+  // ---- corrected SL
+  function correctedSL(swing, atr, k) {
+    let sl = swing - k * atr;
+    const rnd = Math.round(sl / 5) * 5;
+    let moved = false;
+    if (sl - rnd >= 0 && sl - rnd <= 0.25) { sl = rnd - TICK; moved = true; }
+    sl = Math.floor(sl / TICK + 1e-6) * TICK;
+    return { sl, moved, rnd };
+  }
+
+  // ---- main
+  function compute() {
+    renderExpiry();
+    const lot = LOT2[st.inst], budget = n('v2risk') || 0, prem = n('v2prem');
+    const warns = [];
+    let sl = null, swing = null, planRisk = null, slSub = '';
+
+    if (st.mode === 'auto') {
+      swing = n('v2swing'); const atr = n('v2atr');
+      $('v2heroLab').textContent = 'Corrected SL';
+      if (prem > 0 && swing > 0 && atr > 0) {
+        if (swing >= prem) warns.push(['err', 'Swing SL must be below the entry premium.']);
+        else {
+          const d = dte(), k = K_POS[st.pos] * dteFactor(d);
+          const r = correctedSL(swing, atr, k);
+          if (r.sl <= 0) warns.push(['err', 'Corrected SL is at or below zero. Check swing SL and ATR.']);
+          else {
+            sl = r.sl; planRisk = prem - swing;
+            const distATR = (prem - sl) / atr;
+            slSub = `Swing ${p2(swing)} − k ${k.toFixed(2)} × ATR ${p2(atr)}` +
+                    `<br>k = ${K_POS[st.pos].toFixed(2)} (${st.pos}) × ${dteFactor(d).toFixed(2)} (${d === 0 ? 'expiry day' : 'DTE ' + d})` +
+                    `<br>Risk ${p2(prem - sl)} pts = ${distATR.toFixed(1)} ATR` +
+                    (r.moved ? ` · stepped below round level ${r.rnd}` : '');
+            if (distATR < MIN_ATR_DIST)
+              warns.push(['warn', `SL is only ${distATR.toFixed(2)} ATR from entry — inside normal 1-minute noise (minimum ${MIN_ATR_DIST} ATR). Expect a higher chance of getting stopped out; consider skipping or waiting for a better entry.`]);
+          }
+        }
+      } else slSub = 'Enter entry premium, swing SL and ATR.';
+    } else {
+      const pct = n('v2slpct');
+      $('v2heroLab').textContent = 'Stop loss';
+      if (prem > 0 && pct > 0) {
+        sl = Math.max(TICK, Math.floor(prem * (1 - pct / 100) / TICK + 1e-6) * TICK);
+        planRisk = prem - sl;
+        slSub = `${pct}% of ${p2(prem)} = ${p2(prem - sl)} pts`;
+      } else slSub = 'Enter entry premium and SL %.';
+    }
+    $('v2slVal').textContent = sl !== null ? p2(sl) : '—';
+    $('v2slMini').textContent = sl !== null ? `−${p2(prem - sl)} pts (${((prem - sl) / prem * 100).toFixed(1)}%)` : '';
+    $('v2slSub').innerHTML = slSub;
+
+    // ---- lots from (corrected) SL
+    let lots = 0, riskUnit = 0;
+    if (sl !== null) {
+      riskUnit = prem - sl;
+      const perLot = riskUnit * lot;
+      lots = Math.floor(budget / perLot);
+      if (lots < 1) warns.push(['err', `1 lot risks ${inr(perLot)}, more than your ${inr(budget)} budget. No trade at this SL.`]);
+      $('v2lots').textContent = lots;
+      $('v2lotsSub').textContent = lots ? `${lots} × ${lot} = ${lots * lot} qty` : 'over budget';
+      $('v2cap').textContent = lots ? short(lots * lot * prem) : '—';
+      $('v2capSub').textContent = inr(prem * lot) + '/lot';
+      $('v2maxrisk').textContent = lots ? short(lots * perLot) : '—';
+      $('v2maxriskSub').textContent = inr(perLot) + '/lot';
+    } else {
+      ['v2lots', 'v2cap', 'v2maxrisk'].forEach(id => $(id).textContent = '—');
+      ['v2lotsSub', 'v2capSub', 'v2maxriskSub'].forEach(id => $(id).textContent = '');
+    }
+    $('v2warn').innerHTML = warns.map(([c, t]) => `<div class="warn ${c === 'err' ? 'err' : ''}">${t}</div>`).join('');
+
+    // ---- profit
+    const qty = lots * lot;
+    let tgt = null, rewardUnit = 0, planned = '—', planLab = 'Planned';
+    if (sl !== null && lots > 0) {
+      if (st.pmode === 'rr') {
+        rewardUnit = st.rr * planRisk;
+        planned = `1 : ${st.rr}`;
+        planLab = st.mode === 'auto' ? 'Planned · swing SL' : 'Planned';
+      } else {
+        rewardUnit = prem * n('v2ppct') / 100;
+        planned = `+${n('v2ppct') || 0}%`;
+        planLab = 'Planned gain';
+      }
+      tgt = prem + rewardUnit;
+    }
+    if (tgt !== null && rewardUnit > 0) {
+      const profit = rewardUnit * qty, realised = rewardUnit / riskUnit;
+      $('v2tgt').textContent = p2(tgt);
+      $('v2tgtSub').textContent = `+${p2(rewardUnit)} pts (${(rewardUnit / prem * 100).toFixed(1)}%)`;
+      $('v2tgtLab').textContent = st.pmode === 'rr' ? `Target 1:${st.rr}` : `Target +${n('v2ppct') || 0}%`;
+      $('v2exit').textContent = short(qty * tgt);
+      $('v2exitSub').textContent = inr(qty * tgt) + ' total';
+      $('v2profit').textContent = short(profit);
+      $('v2profitSub').textContent = inr(profit) + ' gain';
+      $('v2planLab').textContent = planLab;
+      $('v2planRR').textContent = planned;
+      $('v2realRR').textContent = `1 : ${realised.toFixed(2)}`;
+      $('v2realBox').classList.toggle('low', realised < 1.5);
+      $('v2break').innerHTML = st.mode === 'auto' && st.pmode === 'rr'
+        ? `Target = entry ${p2(prem)} + ${st.rr} × swing risk ${p2(planRisk)}.<br>Realised R:R uses the corrected SL risk of ${p2(riskUnit)} pts — the price of the wider stop.`
+        : `Risk ${inr(qty * riskUnit)} → reward ${inr(profit)}.`;
+    } else {
+      ['v2tgt', 'v2profit', 'v2exit', 'v2planRR', 'v2realRR'].forEach(id => $(id).textContent = '—');
+      ['v2tgtSub', 'v2profitSub', 'v2exitSub'].forEach(id => $(id).textContent = '');
+      $('v2tgtLab').textContent = st.pmode === 'rr' ? `Target 1:${st.rr}` : 'Target';
+      $('v2break').innerHTML = '';
+    }
+  }
+
+  // ---- UI handlers
+  function setActive(wrapId, attr, val) {
+    document.querySelectorAll(`#${wrapId} [data-${attr}]`).forEach(b => b.classList.toggle('active', b.dataset[attr] == val));
+  }
+  function inst(btn) {
+    document.querySelectorAll('#appV2 .inst-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); st.inst = btn.dataset.inst; st.dteOverride = null; compute();
+  }
+  function mode(m) {
+    st.mode = m; setActive('v2mode', 'm', m);
+    $('v2posWrap').classList.toggle('hidden', m !== 'auto');
+    $('v2autoWrap').classList.toggle('hidden', m !== 'auto');
+    $('v2manWrap').classList.toggle('hidden', m !== 'manual');
+    compute();
+  }
+  function pos(p) { st.pos = p; setActive('v2pos', 'p', p); compute(); }
+  function pmode(m) {
+    st.pmode = m; setActive('v2pmode', 'm', m);
+    $('v2rrWrap').classList.toggle('hidden', m !== 'rr');
+    $('v2pctWrap').classList.toggle('hidden', m !== 'pct');
+    compute();
+  }
+  function rr(r) { st.rr = r; setActive('v2rrWrap', 'r', r); compute(); }
+  function slpct(v) { $('v2slpct').value = v; setActive('v2manWrap', 's', v); compute(); }
+  function adj(id, d) { const el = $(id); el.value = Math.max(parseFloat(el.min) || 0, (parseFloat(el.value) || 0) + d); compute(); }
+
+  function save() {
+    localStorage.setItem(KEY, JSON.stringify({
+      inst: st.inst, risk: $('v2risk').value, mode: st.mode, pos: st.pos,
+      pmode: st.pmode, rr: st.rr, slpct: $('v2slpct').value, ppct: $('v2ppct').value }));
+    const b = $('v2save'); b.textContent = '✓ Saved as default'; b.classList.add('saved');
+    setTimeout(() => { b.textContent = '⬇ Save as default'; b.classList.remove('saved'); }, 2000);
+  }
+  function load() {
+    try {
+      const s = JSON.parse(localStorage.getItem(KEY)); if (!s) return;
+      if (s.inst && LOT2[s.inst]) {
+        st.inst = s.inst;
+        document.querySelectorAll('#appV2 .inst-btn').forEach(b => b.classList.toggle('active', b.dataset.inst === s.inst));
+      }
+      if (s.risk) $('v2risk').value = s.risk;
+      if (s.slpct) $('v2slpct').value = s.slpct;
+      if (s.ppct) $('v2ppct').value = s.ppct;
+      if (s.pos && K_POS[s.pos]) { st.pos = s.pos; setActive('v2pos', 'p', s.pos); }
+      if (s.rr) { st.rr = +s.rr; setActive('v2rrWrap', 'r', st.rr); }
+      if (s.mode) mode(s.mode);
+      if (s.pmode) pmode(s.pmode);
+    } catch (e) {}
+  }
+  function init() { load(); setActive('v2manWrap', 's', n('v2slpct')); compute(); }
+  return { compute, inst, mode, pos, pmode, rr, slpct, adj, save, cycleDTE, init, correctedSL, autoExpiry, _st: st };
+})();
+
+/* ================= version switch ================= */
+function setVersion(v) {
+  document.getElementById('appV1').classList.toggle('hidden', v !== '1');
+  document.getElementById('appV2').classList.toggle('hidden', v !== '2');
+  document.querySelectorAll('.ver-toggle button').forEach(b => b.classList.toggle('active', b.dataset.v === v));
+  localStorage.setItem('optionSizer_version', v);
+}
+v2.init();
+setVersion(localStorage.getItem('optionSizer_version') || '2');
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
 </body>
 </html>
